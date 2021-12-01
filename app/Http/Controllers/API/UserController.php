@@ -34,4 +34,10 @@ class UserController extends Controller
             return ResponseFormatter::error(['message' => 'Something went wrong', 'error' => $th], 'Authentication failed', 500);
         }
     }
+
+    public function logout(Request $request)
+    {
+        $token = $request->user()->currentAccessToken()->delete();
+        return ResponseFormatter::success($token, 'token Revoked');
+    }
 }

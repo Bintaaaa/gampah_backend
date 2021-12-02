@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Carbon\Carbon;
+use Closure;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -77,5 +79,15 @@ class UserController extends Controller
                 'error' => $error
             ], 'Authenticated Failed', 500);
         }
+    }
+
+    public function profile(Request $request)
+    {
+        $user = Auth::user();
+        $carbon =  Carbon::now();
+        $user->update([
+            'last_active' => $carbon->toDateTimeString()
+        ]);
+        return ResponseFormatter::success($request->user(), 'Success to get data user');
     }
 }

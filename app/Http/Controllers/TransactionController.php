@@ -32,28 +32,26 @@ class TransactionController extends Controller
 
     function create(Request $request)
     {
-        $resultFileName = $request->file('report_img')->store('report_images');
-        $reporterId = $request->reporterId;
+        $file = $request->file('report_img');
+        $now = date('m/d/Y h:i:s a', time());
+        $out = substr(hash('md5', $now), 0, 12);
+        $file->move("uploads", $out . "." . $file->clientExtension());
+        $reporterId = $request->reporter_id;
         $driverId = TransactionController::getLeastBusyDriver()->id;
-        $reportImage = $resultFileName;
+        $reportImage = $file->getFilename();
         $addressDetail = $request->address_detail;
         $status = "PENDING";
         $latitude = $request->latitude;
         $longitude = $request->longitude;
-
-        try {
-            transactions::create([
-                'reporter_id' => $reporterId,
-                'driver_id' => $driverId,
-                'report_image' => $reportImage,
-                'address_detail' => $addressDetail,
-                'status' => $status,
-                'longitude' => $longitude,
-                'latitude' => $latitude
-            ]);
-            ResponseFormatter::success(null, 'Transaction Created');
-        } catch (\Throwable $th) {
-            ResponseFormatter::error($th, 'Unable to create transaction');
-        }
+        transactions::create([
+            'reporter_id' => $reporterId,
+            'driver_id' => $driverId,
+            'report_image' => $reportImage,
+            'address_detail' => $addressDetail,
+            'status' => $status,
+            'longitude' => $longitude,
+            'latitude' => $latitude
+        ]);
+        ResponseFormatter::success("Inserted", 'Transaction Created');
     }
 }

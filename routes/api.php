@@ -24,3 +24,4 @@ Route::post('login', [UserController::class, 'login']);
 Route::post('register', [UserController::class, 'register']);
 
 Route::get('transactions', [TransactionController::class, 'getLeastBusyDriver']);
+Route::post('transactions', [TransactionController::class, 'create']);

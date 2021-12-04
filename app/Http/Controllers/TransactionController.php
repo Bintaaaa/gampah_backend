@@ -35,7 +35,7 @@ class TransactionController extends Controller
         $file = $request->file('report_img');
         $now = date('m/d/Y h:i:s a', time());
         $out = substr(hash('md5', $now), 0, 12);
-        $newFilename = "uploads/" . $out . $file->getClientOriginalExtension();
+        $newFilename = "uploads/" . $out . "." . $file->getClientOriginalExtension();
         $file->move($newFilename);
         $reporterId = $request->reporter_id;
         $driverId = TransactionController::getLeastBusyDriver()->id;

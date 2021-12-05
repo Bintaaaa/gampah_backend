@@ -42,19 +42,20 @@ class TransactionController extends Controller
         }
         else {
             $userFirst = $user->first();
+            // dd($userFirst);
             if ($userFirst->roles == "driver") {
                 $driverTransactions = transactions::where('driver_id', '=', $userId)
-                    ->where('status', '=', 'PENDING');
+                    ->where('status', '=', 'PENDING')->get();
                 return ResponseFormatter::success(
                     $driverTransactions,
                     "Driver transactions"
                 );
             }
             else {
-                $userTransactions = transactions::where('reporter_id', '=', $userId)->orderBy('id', 'asc');
+                $userTransactions = transactions::where('reporter_id', '=', $userId)->orderBy('id', 'desc')->get();
                 return ResponseFormatter::success(
                     $userTransactions,
-                    "Driver transactions"
+                    "User transactions"
                 );
             }
         }

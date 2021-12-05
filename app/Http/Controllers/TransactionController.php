@@ -6,6 +6,7 @@ use App\Helpers\ResponseFormatter;
 use Illuminate\Http\Request;
 use App\Models\transactions;
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
@@ -61,27 +62,35 @@ class TransactionController extends Controller
 
     function create(Request $request)
     {
-        $file = $request->file('report_img');
-        $now = date('m/d/Y h:i:s a', time());
-        $out = substr(hash('md5', $now), 0, 12);
-        $newFilename = "uploads/" . $out . "." . $file->getClientOriginalExtension();
-        $file->move($newFilename);
-        $reporterId = $request->reporter_id;
-        $driverId = TransactionController::getLeastBusyDriver()->id;
-        $reportImage = $newFilename;
-        $addressDetail = $request->address_detail;
-        $status = "PENDING";
-        $latitude = $request->latitude;
-        $longitude = $request->longitude;
-        transactions::create([
-            'reporter_id' => $reporterId,
-            'driver_id' => $driverId,
-            'report_image' => $reportImage,
-            'address_detail' => $addressDetail,
-            'status' => $status,
-            'longitude' => $longitude,
-            'latitude' => $latitude
-        ]);
-        return ResponseFormatter::success("Inserted", 'Transaction Created');
+        try {
+            $file = $request->file('report_img');
+            $now = date('m/d/Y h:i:s a', time());
+            $out = substr(hash('md5', $now), 0, 12);
+            $newFilename = "uploads/" . $out . "." . $file->getClientOriginalExtension();
+            $file->move($newFilename);
+            $reporterId = $request->reporter_id;
+            $driverId = TransactionController::getLeastBusyDriver()->id;
+            $reportImage = $newFilename;
+            $addressDetail = $request->address_detail;
+            $status = "PENDING";
+            $latitude = $request->latitude;
+            $longitude = $request->longitude;
+            transactions::create([
+                'reporter_id' => $reporterId,
+                'driver_id' => $driverId,
+                'report_image' => $reportImage,
+                'address_detail' => $addressDetail,
+                'status' => $status,
+                'longitude' => $longitude,
+                'latitude' => $latitude
+            ]);
+            $transaction = transactions::where('reporter_id', $reporterId)->first();
+            return ResponseFormatter::success(['report' => $transaction], 'Transaction Created');
+        } catch (Exception $err) {
+            return ResponseFormatter::error([
+                'message' => 'Something went wrong',
+                'error' => $err
+            ], 'Authenticated Failed', 500);
+        }
     }
 }

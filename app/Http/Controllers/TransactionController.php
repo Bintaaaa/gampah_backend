@@ -30,6 +30,35 @@ class TransactionController extends Controller
         }
     }
 
+    function getTransactions(int $userId) {
+        $user = User::where('id', '=', $userId);
+        if ($user->count() == 0) {
+            return ResponseFormatter::error(
+                null,
+                "User with id $userId is not found",
+                404
+            );
+        }
+        else {
+            $userFirst = $user->first();
+            if ($userFirst->roles == "driver") {
+                $driverTransactions = transactions::where('driver_id', '=', $userId)
+                    ->where('status', '=', 'PENDING');
+                return ResponseFormatter::success(
+                    $driverTransactions,
+                    "Driver transactions"
+                );
+            }
+            else {
+                $userTransactions = transactions::where('reporter_id', '=', $userId)->orderBy('id', 'asc');
+                return ResponseFormatter::success(
+                    $userTransactions,
+                    "Driver transactions"
+                );
+            }
+        }
+    }
+
     function create(Request $request)
     {
         $file = $request->file('report_img');
@@ -53,6 +82,6 @@ class TransactionController extends Controller
             'longitude' => $longitude,
             'latitude' => $latitude
         ]);
-        ResponseFormatter::success("Inserted", 'Transaction Created');
+        return ResponseFormatter::success("Inserted", 'Transaction Created');
     }
 }

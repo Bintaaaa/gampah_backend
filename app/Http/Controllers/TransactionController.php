@@ -31,7 +31,8 @@ class TransactionController extends Controller
         }
     }
 
-    function getTransactions(int $userId) {
+    function getTransactions(int $userId)
+    {
         $user = User::where('id', '=', $userId);
         if ($user->count() == 0) {
             return ResponseFormatter::error(
@@ -39,8 +40,7 @@ class TransactionController extends Controller
                 "User with id $userId is not found",
                 404
             );
-        }
-        else {
+        } else {
             $userFirst = $user->first();
             // dd($userFirst);
             if ($userFirst->roles == "driver") {
@@ -50,8 +50,7 @@ class TransactionController extends Controller
                     $driverTransactions,
                     "Driver transactions"
                 );
-            }
-            else {
+            } else {
                 $userTransactions = transactions::where('reporter_id', '=', $userId)->orderBy('id', 'desc')->get();
                 return ResponseFormatter::success(
                     $userTransactions,
@@ -67,8 +66,9 @@ class TransactionController extends Controller
             $file = $request->file('report_img');
             $now = date('m/d/Y h:i:s a', time());
             $out = substr(hash('md5', $now), 0, 12);
-            $newFilename = "uploads/" . $out . "." . $file->getClientOriginalExtension();
-            $file->move($newFilename);
+            $newFilename = $out . "." . $file->getClientOriginalExtension();
+            $folder = '/uploads';
+            $file->storeAs($folder, $newFilename, 'public');
             $reporterId = $request->reporter_id;
             $driverId = TransactionController::getLeastBusyDriver()->id;
             $reportImage = $newFilename;

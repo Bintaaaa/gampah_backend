@@ -24,4 +24,6 @@ Route::post('login', [UserController::class, 'login']);
 Route::post('register', [UserController::class, 'register']);
 
 Route::post('transactions', [TransactionController::class, 'create']);
+Route::patch('transactions/operations/{transactionId}/observation', [TransactionController::class, "updateProofOfObservation"]);
+Route::patch('transactions/operations/{transactionId}/cleanup', [TransactionController::class, "updateProofOfCleanup"]);
 Route::get('transactions/{userId}', [TransactionController::class, 'getTransactions']);

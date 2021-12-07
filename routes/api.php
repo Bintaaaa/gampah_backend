@@ -23,7 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('transactions/operations/{transactionId}/observation', [TransactionController::class, "updateProofOfObservation"]);
     Route::patch('transactions/operations/{transactionId}/cleanup', [TransactionController::class, "updateProofOfCleanup"]);
     Route::get('transactions/{transactionid}/details', [TransactionController::class, 'getTransactionDetail']);
-    Route::get('transactions/{userId}', [TransactionController::class, 'getTransactions']);
+    Route::get('transactions/', [TransactionController::class, 'getTransactions']);
 });
 Route::post('login', [UserController::class, 'login']);
 Route::post('register', [UserController::class, 'register']);

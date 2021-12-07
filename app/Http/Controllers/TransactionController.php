@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\transactions;
 use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
@@ -31,32 +32,22 @@ class TransactionController extends Controller
         }
     }
 
-    function getTransactions(int $userId)
+    function getTransactions(Request $request)
     {
-        $user = User::where('id', '=', $userId);
-        if ($user->count() == 0) {
-            return ResponseFormatter::error(
-                null,
-                "User with id $userId is not found",
-                404
+        $userFirst = Auth::user();
+        if ($userFirst->roles == "DRIVER") {
+            $driverTransactions = transactions::where('driver_id', '=', $userFirst->id)
+                ->where('status', '=', 'PENDING')->get();
+            return ResponseFormatter::success(
+                $driverTransactions,
+                "Driver transactions"
             );
         } else {
-            $userFirst = $user->first();
-            // dd($userFirst);
-            if ($userFirst->roles == "driver") {
-                $driverTransactions = transactions::where('driver_id', '=', $userId)
-                    ->where('status', '=', 'PENDING')->get();
-                return ResponseFormatter::success(
-                    $driverTransactions,
-                    "Driver transactions"
-                );
-            } else {
-                $userTransactions = transactions::where('reporter_id', '=', $userId)->orderBy('id', 'desc')->get();
-                return ResponseFormatter::success(
-                    $userTransactions,
-                    "User transactions"
-                );
-            }
+            $userTransactions = transactions::where('reporter_id', '=', $userFirst)->orderBy('id', 'desc')->get();
+            return ResponseFormatter::success(
+                $userTransactions,
+                "User transactions"
+            );
         }
     }
 
@@ -93,8 +84,7 @@ class TransactionController extends Controller
                     'picked_image' => $newFilename
                 ]);
             return ResponseFormatter::success(null, "Proof of observation updated");
-        }
-        else {
+        } else {
             return ResponseFormatter::error(null, "Either there is no transaction with id $transactionId or the transaction is not in pending state");
         }
     }
@@ -115,8 +105,7 @@ class TransactionController extends Controller
                     'finished_image' => $newFilename
                 ]);
             return ResponseFormatter::success(null, "Proof of cleanup updated");
-        }
-        else {
+        } else {
             return ResponseFormatter::error(null, "Either there is no transaction with id $transactionId or the transaction is not in observed state");
         }
     }

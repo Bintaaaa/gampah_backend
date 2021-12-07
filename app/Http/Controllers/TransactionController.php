@@ -113,13 +113,14 @@ class TransactionController extends Controller
     function create(Request $request)
     {
         try {
+            $user = Auth::user();
             $file = $request->file('report_img');
             $now = date('m/d/Y h:i:s a', time());
             $out = substr(hash('md5', $now), 0, 12);
             $newFilename = $out . "." . $file->getClientOriginalExtension();
             $folder = '/uploads';
             $file->storeAs($folder, $newFilename, 'public');
-            $reporterId = $request->reporter_id;
+            $reporterId = $user->id;
             $driverId = TransactionController::getLeastBusyDriver()->id;
             $reportImage = $newFilename;
             $addressDetail = $request->address_detail;

@@ -60,6 +60,23 @@ class TransactionController extends Controller
         }
     }
 
+    function getTransactionDetail(int $transactionId)
+    {
+        $foundTransaction = transactions::where("id", '=', $transactionId)->get();
+        if ($foundTransaction->count() == 0) {
+            return ResponseFormatter::error(
+                null,
+                ["No transaction with id $transactionId is found."],
+                404
+            );
+        } else {
+            return ResponseFormatter::success(
+                $foundTransaction,
+                "Transaction $transactionId details"
+            );
+        }
+    }
+
     function create(Request $request)
     {
         try {

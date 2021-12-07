@@ -77,6 +77,50 @@ class TransactionController extends Controller
         }
     }
 
+    function updateProofOfObservation(int $transactionId, Request $request)
+    {
+        $foundTransaction = transactions::where('id', '=', $transactionId);
+        if ($foundTransaction->count() > 0 && $foundTransaction->first()->status == "PENDING") {
+            $file = $request->file("observation_img");
+            $now = date('m/d/Y h:i:s a', time());
+            $out = substr(hash('md5', $now), 0, 12);
+            $newFilename = $out . "." . $file->getClientOriginalExtension();
+            $folder = '/uploads';
+            $file->storeAs($folder, $newFilename, 'public');
+            transactions::where('id', '=', $transactionId)
+                ->update([
+                    'status' => "DITINJAU",
+                    'picked_image' => $newFilename
+                ]);
+            return ResponseFormatter::success(null, "Proof of observation updated");
+        }
+        else {
+            return ResponseFormatter::error(null, "Either there is no transaction with id $transactionId or the transaction is not in pending state");
+        }
+    }
+
+    function updateProofOfCleanup(int $transactionId, Request $request)
+    {
+        $foundTransaction = transactions::where('id', '=', $transactionId);
+        if ($foundTransaction->count() > 0 && $foundTransaction->first()->status == "DITINJAU") {
+            $file = $request->file("cleanup_img");
+            $now = date('m/d/Y h:i:s a', time());
+            $out = substr(hash('md5', $now), 0, 12);
+            $newFilename = $out . "." . $file->getClientOriginalExtension();
+            $folder = '/uploads';
+            $file->storeAs($folder, $newFilename, 'public');
+            transactions::where('id', '=', $transactionId)
+                ->update([
+                    'status' => "DIJEMPUT",
+                    'finished_image' => $newFilename
+                ]);
+            return ResponseFormatter::success(null, "Proof of cleanup updated");
+        }
+        else {
+            return ResponseFormatter::error(null, "Either there is no transaction with id $transactionId or the transaction is not in observed state");
+        }
+    }
+
     function create(Request $request)
     {
         try {

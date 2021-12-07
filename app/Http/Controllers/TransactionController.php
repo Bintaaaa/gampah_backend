@@ -34,16 +34,17 @@ class TransactionController extends Controller
 
     function getTransactions(Request $request)
     {
-        $userFirst = Auth::user();
-        if ($userFirst->roles == "DRIVER") {
-            $driverTransactions = transactions::where('driver_id', '=', $userFirst->id)
+        $user = Auth::user();
+        $user->id = Auth::id();
+        if ($user->roles == "DRIVER") {
+            $driverTransactions = transactions::where('driver_id', '=', $user->id)
                 ->where('status', '=', 'PENDING')->get();
             return ResponseFormatter::success(
                 $driverTransactions,
                 "Driver transactions"
             );
         } else {
-            $userTransactions = transactions::where('reporter_id', '=', $userFirst)->orderBy('id', 'desc')->get();
+            $userTransactions = transactions::where('reporter_id', '=', $user)->orderBy('id', 'desc')->get();
             return ResponseFormatter::success(
                 $userTransactions,
                 "User transactions"
@@ -114,8 +115,8 @@ class TransactionController extends Controller
     {
         try {
             $user = Auth::user();
+            $user->id = Auth::id();
             if ($user->roles != "DRIVER") {
-
                 $file = $request->file('report_img');
                 $now = date('m/d/Y h:i:s a', time());
                 $out = substr(hash('md5', $now), 0, 12);

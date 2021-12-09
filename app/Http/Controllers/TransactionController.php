@@ -16,7 +16,7 @@ class TransactionController extends Controller
     static function getLeastBusyDriver()
     {
         if (transactions::count() == 0) {
-            return User::where('roles', '=', 'driver')->first();
+            return User::where('roles', '=', 'DRIVER')->first();
         } else {
             $joblessDrivers = DB::table("users")->select()->whereNotIn('users.id', DB::table("transactions")->select('driver_id'))->where('roles', '=', 'driver')->get();
             if ($joblessDrivers->count() == 0) {
@@ -27,7 +27,7 @@ class TransactionController extends Controller
                     ->first();
                 return User::where('id', '=', $leastBusyDriver->id)->first();
             } else {
-                return $joblessDrivers;
+                return $joblessDrivers->first();
             }
         }
     }
@@ -112,41 +112,41 @@ class TransactionController extends Controller
 
     function create(Request $request)
     {
-        try {
-            $user = Auth::user();
-            if ($user->roles != "DRIVER") {
-                $file = $request->file('report_img');
-                $now = date('m/d/Y h:i:s a', time());
-                $out = substr(hash('md5', $now), 0, 12);
-                $newFilename = $out . "." . $file->getClientOriginalExtension();
-                $folder = '/uploads';
-                $file->storeAs($folder, $newFilename, 'public');
-                $reporterId = $user->id;
-                $driverId = TransactionController::getLeastBusyDriver()->id;
-                $reportImage = $newFilename;
-                $addressDetail = $request->address_detail;
-                $status = "PENDING";
-                $latitude = $request->latitude;
-                $longitude = $request->longitude;
-                transactions::create([
-                    'reporter_id' => $reporterId,
-                    'driver_id' => $driverId,
-                    'report_image' => $reportImage,
-                    'address_detail' => $addressDetail,
-                    'status' => $status,
-                    'longitude' => $longitude,
-                    'latitude' => $latitude
-                ]);
-                $transaction = transactions::where('reporter_id', $reporterId)->first();
-                return ResponseFormatter::success(['report' => $transaction], 'Transaction Created');
-            } else {
-                return ResponseFormatter::error(null, "Driver cannot create transactions.");
-            }
-        } catch (Exception $err) {
-            return ResponseFormatter::error([
-                'message' => 'Something went wrong',
-                'error' => $err
-            ], 'Authenticated Failed', 500);
+        $user = Auth::user();
+        if ($user->roles != "DRIVER") {
+            $file = $request->file('report_img');
+            $now = date('m/d/Y h:i:s a', time());
+            $out = substr(hash('md5', $now), 0, 12);
+            $newFilename = $out . "." . $file->getClientOriginalExtension();
+            $folder = '/uploads';
+            $file->storeAs($folder, $newFilename, 'public');
+            $reporterId = $user->id;
+            $driverId = TransactionController::getLeastBusyDriver()->id;
+            $reportImage = $newFilename;
+            $addressDetail = $request->address_detail;
+            $status = "PENDING";
+            $latitude = $request->latitude;
+            $longitude = $request->longitude;
+            transactions::create([
+                'reporter_id' => $reporterId,
+                'driver_id' => $driverId,
+                'report_image' => $reportImage,
+                'address_detail' => $addressDetail,
+                'status' => $status,
+                'longitude' => $longitude,
+                'latitude' => $latitude
+            ]);
+            $transaction = transactions::where('reporter_id', $reporterId)->first();
+            return ResponseFormatter::success(['report' => $transaction], 'Transaction Created');
+        } else {
+            return ResponseFormatter::error(null, "Driver cannot create transactions.");
         }
     }
+    //  catch (Exception $err) {
+    //     return ResponseFormatter::error([
+    //         'message' => 'Something went wrong',
+    //         'error' => $err
+    //     ], 'Authenticated Failed', 500);
+    // }
+    // }
 }

@@ -149,4 +149,15 @@ class TransactionController extends Controller
             ], 'Server Error', 500);
         }
     }
+
+    function pickupCount()
+    {
+        $count = transactions::where('status', '=', 'DIJEMPUT')->count();
+        return ResponseFormatter::success(
+            [
+                "count" => $count
+            ],
+            "Number of Transactions"
+        );
+    }
 }

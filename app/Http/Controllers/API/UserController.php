@@ -90,4 +90,26 @@ class UserController extends Controller
         ]);
         return ResponseFormatter::success($request->user(), 'Success to get data user');
     }
+
+    public function contributors()
+    {
+        $count = User::count();
+        return ResponseFormatter::success(
+            [
+                "count" => $count
+            ],
+            "Number of contributors"
+        );
+    }
+
+    public function drivers()
+    {
+        $count = User::where('roles', '=', 'DRIVER')->count();
+        return ResponseFormatter::success(
+            [
+                "count" => $count
+            ],
+            "Number of drivers"
+        );
+    }
 }

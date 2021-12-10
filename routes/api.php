@@ -4,6 +4,7 @@ use App\Http\Controllers\API\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TransactionController;
+use App\Models\transactions;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,5 +26,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('transactions/{transactionid}/details', [TransactionController::class, 'getTransactionDetail']);
     Route::get('transactions/', [TransactionController::class, 'getTransactions']);
 });
+
+Route::prefix('stats')->group(function() {
+    Route::get('/contributors', [UserController::class, 'contributors']);
+    Route::get('/drivers', [UserController::class, 'drivers']);
+    Route::get('/pickups', [transactions::class, 'pickupCount']);
+});
+
 Route::post('login', [UserController::class, 'login']);
 Route::post('register', [UserController::class, 'register']);

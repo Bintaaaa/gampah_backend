@@ -53,7 +53,7 @@ class TransactionController extends Controller
 
     function getTransactionDetail(int $transactionId)
     {
-        $foundTransaction = transactions::where("id", '=', $transactionId)->get();
+        $foundTransaction = transactions::where("id", '=', $transactionId)->first();
         if ($foundTransaction->count() == 0) {
             return ResponseFormatter::error(
                 null,

@@ -27,7 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('transactions/', [TransactionController::class, 'getTransactions']);
 });
 
-Route::prefix('stats')->group(function() {
+Route::prefix('stats')->group(function () {
     Route::get('/contributors', [UserController::class, 'contributors']);
     Route::get('/drivers', [UserController::class, 'drivers']);
     Route::get('/pickups', [transactions::class, 'pickupCount']);

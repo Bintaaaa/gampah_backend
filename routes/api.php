@@ -30,7 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::prefix('stats')->group(function() {
     Route::get('/contributors', [UserController::class, 'contributors']);
     Route::get('/drivers', [UserController::class, 'drivers']);
-    Route::get('/pickups', [transactions::class, 'pickupCount']);
+    Route::get('/pickups', [TransactionController::class, 'pickupCount']);
 });
 
 Route::post('login', [UserController::class, 'login']);

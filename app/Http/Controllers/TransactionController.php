@@ -37,7 +37,7 @@ class TransactionController extends Controller
         $user = Auth::user();
         if ($user->roles == "DRIVER") {
             $driverTransactions = transactions::where('driver_id', '=', $user->id)
-                ->where('status', '=', 'PENDING')->get();
+                ->where('status', '!=', 'DIJEMPUT')->get();
             return ResponseFormatter::success(
                 $driverTransactions,
                 "Driver transactions"
@@ -53,7 +53,7 @@ class TransactionController extends Controller
 
     function getTransactionDetail(int $transactionId)
     {
-        $foundTransaction = transactions::where("id", '=', $transactionId)->get();
+        $foundTransaction = transactions::where("id", '=', $transactionId)->first();
         if ($foundTransaction->count() == 0) {
             return ResponseFormatter::error(
                 null,

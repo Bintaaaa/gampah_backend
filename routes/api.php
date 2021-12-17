@@ -31,6 +31,8 @@ Route::prefix('stats')->group(function () {
     Route::get('/contributors', [UserController::class, 'contributors']);
     Route::get('/drivers', [UserController::class, 'drivers']);
     Route::get('/pickups', [TransactionController::class, 'pickupCount']);
+    Route::get('/reward/{id}/reporter', [TransactionController::class, 'rewardPointReporter']);
+    Route::get('/reward/{id}/driver', [TransactionController::class, 'rewardPointDriver']);
 });
 
 Route::post('login', [UserController::class, 'login']);

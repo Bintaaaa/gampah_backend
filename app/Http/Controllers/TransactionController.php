@@ -160,4 +160,43 @@ class TransactionController extends Controller
             "Number of Transactions"
         );
     }
+
+    function rewardPointReporter($id)
+    {
+        $count = transactions::where(
+            'status',
+            '=',
+            'DIJEMPUT',
+
+        )->where(
+            "reporter_id",
+            '=',
+            $id
+        )->count();
+
+        $reward = $count * 0.000004366;
+
+        return ResponseFormatter::success([
+            "reward" => $reward
+        ]);
+    }
+    function rewardPointDriver($id)
+    {
+        $count = transactions::where(
+            'status',
+            '=',
+            'DIJEMPUT',
+
+        )->where(
+            "driver_id",
+            '=',
+            $id
+        )->count();
+
+        $reward = $count * 0.000009366;
+
+        return ResponseFormatter::success([
+            "reward" => $reward
+        ]);
+    }
 }

@@ -86,12 +86,14 @@
                                 class="fab fa-google-play"></i>Download</a>
                     </div> <!-- end of text-container -->
                 </div> <!-- end of col -->
-                <div class="col-lg-6">
-                    <iframe width="560" height="315" src="https://www.youtube.com/embed/mKk_htyyVSs"
-                        title="YouTube video player" frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen></iframe>
-                </div> <!-- end of col -->
+                <div class="col-lg-6 mt-5 pt-5">
+                    <div class="videowrapper embed-responsive embed-responsive-16by9">
+                         <iframe width="560" height="315" src="https://www.youtube.com/embed/mKk_htyyVSs?autoplay=1"
+                         title="YouTube video player" frameborder="0"
+                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                         allowfullscreen></iframe>
+                    </div>
+                 </div> 
             </div> <!-- end of row -->
         </div> <!-- end of container -->
     </header> <!-- end of header -->

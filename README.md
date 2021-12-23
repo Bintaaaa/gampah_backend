@@ -14,5 +14,6 @@ Repository ini berisikan _source code_ dari _backend_ aplikasi Gampah yang diban
 ### Frontend
 Frontend dari sistem Gampah ini di bangun dari _library_ FLutter dan kompetibel diperangkat android. Source code _frontend_ ada pada link [berikut](https://github.com/seikosantana/gampah).
 
-### Credits
-_Menyusul kemudian.._
+## Resource yang dipakai
+
+- [PAVO](https://inovatik.com/pavo/index.html) -Template Website Keren!
